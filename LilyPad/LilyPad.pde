@@ -32,7 +32,7 @@ int nlines = 50;                                           // Number of streamli
 
 // Bodytype variables ************************************
 // General
-int BODYTYPE = 4;
+int BODYTYPE = 2;
 float mu = 0.0011375;
 float rho = 1000;
 float Rotate_Degrees = 45;
@@ -79,10 +79,9 @@ void setup(){
   else if (BODYTYPE == 2) {
     // Foil - BODYTYPE 2
     body = new NACA(x,y,c,t,pivot,view);                   //define geom foil
-    //body.rotate(0.17);
-    //body.update();
+    body.rotate(Rotate_Degrees*PI/180);
+    body.dphi=0;
     flow = new BDIM(2*n,n,0.,body,c/Re_foil,true);                 // solve for flow using BDIM
-    //body.rotate(Rotate_Degrees*PI/180); BROKEN SOLITION NEEDS CODING
   }
   else if (BODYTYPE == 3) {
     // Square - BODYTYPE 3
@@ -103,6 +102,7 @@ void setup(){
 
 
 void draw(){
+  body.follow(new PVector(x,y,Rotate_Degrees*PI/180),new PVector(0,0,0));
   body.follow();                                           // update the body
   flow.update(body); flow.update2();                       // 2-step fluid update
   body.display();                                          // display the body
