@@ -32,7 +32,7 @@ int nlines = 50;                                           // Number of streamli
 
 // Bodytype variables ************************************
 // General
-int BODYTYPE = 2;
+int BODYTYPE = 4;
 float mu = 0.0011375;
 float rho = 1000;
 float Rotate_Degrees = 45;
