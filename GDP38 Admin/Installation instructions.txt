@@ -1,0 +1,14 @@
+1) 	Sign into GitHub
+
+2) 	Join our GDP38 group (organisation)
+	https://github.com/GDP38-Tidal-Turbine-Inflow-Rig
+	*You should now have access to the "Forked" lily-pad repo*
+	*This is a version of GW's Lilypad but one that we can edit without affecting his*
+
+3) 	Download GitHub Desktop and sign in
+
+4)	Sync the lily-pad repo from our GDP group using the Github Desktop program
+
+5) 	...And we're away - make changes and remember to commit them with a short message to explain what the changes are
+	*Commiting changes updates and merges your changes with the master GitHub version of our project*
+	*If multiple of us do this, it will merge changes where possible and if there is a conflict it will ask for manual editing but this should become apparent*
