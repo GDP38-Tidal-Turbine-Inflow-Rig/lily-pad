@@ -32,7 +32,7 @@ int nlines = 50;                                           // Number of streamli
 
 // Bodytype variables ************************************
 // General
-int BODYTYPE = 2;
+int BODYTYPE = 3;
 float mu = 0.0011375;
 float rho = 1000;
 float Rotate_Degrees = 45;
@@ -55,7 +55,6 @@ float L_square = n/6;                                           // length-scale 
 float l_square = 0.1;
 float u_square = 0.09916;                                            // inflow velocity
 float Re_square = rho*u_square*l_square/mu;
-
 // Spoon - BODYTYPE 4
 float L_spoon = n/3.6;                                           // length-scale in grid units
 float l_spoon = 0.05;
@@ -86,12 +85,13 @@ void setup(){
   else if (BODYTYPE == 3) {
     // Square - BODYTYPE 3
     body = new SquareBody(n/3,n/2,L_square,Rotate_Degrees,view);
+    flow = new BDIM(2*n,n,0.,body,L_square/Re_square,true);                 // solve for flow using BDIM
     //body.rotate(Rotate_Degrees*PI/180);
   }
   else if (BODYTYPE == 4) {
     // Spoon - BODYTYPE 4
     body = new SpoonBody(n/3,n/2,L_spoon,Rotate_Degrees,view);
-      flow = new BDIM(2*n,n,0.,body,L_spoon/Re_spoon,true);                 // solve for flow using BDIM
+    flow = new BDIM(2*n,n,0.,body,L_spoon/Re_spoon,true);                 // solve for flow using BDIM
     //body.rotate(Rotate_Degrees*PI/180);
   }
   
