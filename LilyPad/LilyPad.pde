@@ -23,6 +23,7 @@ DECLARATIONS
 BDIM flow;
 Body body;
 ParticlePlot plot;
+float tstep = 0;
 
 // Environment constants *********************************
 int timestep = 1;                                          // Current time step
@@ -32,7 +33,7 @@ int nlines = 50;                                           // Number of streamli
 
 // Bodytype variables ************************************
 // General
-int BODYTYPE = 3;
+int BODYTYPE = 2;
 float mu = 0.0011375;
 float rho = 1000;
 float Rotate_Degrees = 45;
@@ -49,7 +50,7 @@ float x= n/3;
 float y= n/2;
 float c= n/3;
 float t= 0.3;
-float pivot =0;
+float pivot = 1/4.0;
 // Square - BODYTYPE 3
 float L_square = n/6;                                           // length-scale in grid units
 float l_square = 0.1;
@@ -78,8 +79,8 @@ void setup(){
   else if (BODYTYPE == 2) {
     // Foil - BODYTYPE 2
     body = new NACA(x,y,c,t,pivot,view);                   //define geom foil
-    body.rotate(Rotate_Degrees*PI/180);
-    body.dphi=0;
+    //body.rotate(Rotate_Degrees*PI/180);
+    //body.dphi=0.01;
     flow = new BDIM(2*n,n,0.,body,c/Re_foil,true);                 // solve for flow using BDIM
   }
   else if (BODYTYPE == 3) {
@@ -98,11 +99,14 @@ void setup(){
   plot = new ParticlePlot(view, 20000);
   plot.setColorMode(4);
   plot.setLegend("Vorticity",-0.5,0.5);
+  
 }
 
 
 void draw(){
-  body.follow(new PVector(x,y,Rotate_Degrees*PI/180),new PVector(0,0,0));
+  tstep = tstep + 0.001;
+  //body.follow(new PVector(x,y,Rotate_Degrees*PI/180+0.01),new PVector(0,0,0));
+  body.follow(new PVector(x,y,-sin(tstep)*PI/6.0),new PVector(0,0,0.001));
   body.follow();                                           // update the body
   flow.update(body); flow.update2();                       // 2-step fluid update
   body.display();                                          // display the body
