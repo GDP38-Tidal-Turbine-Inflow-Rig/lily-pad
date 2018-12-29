@@ -30,6 +30,7 @@ int timestep = 1;                                          // Current time step
 int endstep = 4001;                                        // Number of iterations before simulation exits
 int n=(int)pow(2,7);                                       // number of grid points
 int nlines = 50;                                           // Number of streamlines
+float h = 1/n;                                               // Width of one grid cell (in non-dimensionalised units)
 
 // Bodytype variables ************************************
 // General
@@ -61,6 +62,13 @@ float L_spoon = n/3.6;                                           // length-scale
 float l_spoon = 0.05;
 float u_spoon = 0.09916;                                            // inflow velocity
 float Re_spoon = rho*u_spoon*l_spoon/mu;
+
+// Setting up for moving objects *************************
+float omega = PI/6.;                                          // angular frequency of object in rad/s
+double omegamod = omega*h;
+float angmax = PI/12.;                                     // maximum 'flap' in positive direction
+float angmin = -angmax;                                   // maximum 'flap' in negative direction
+float angrange = PI/6.;//abs(angmin) + abs(angmax);
 
 
 /*********************************************************
@@ -104,9 +112,10 @@ void setup(){
 
 
 void draw(){
-  tstep = tstep + 0.001;
+  tstep = tstep + 0.1;
+  println(n);
   //body.follow(new PVector(x,y,Rotate_Degrees*PI/180+0.01),new PVector(0,0,0));
-  body.follow(new PVector(x,y,-sin(tstep)*PI/6.0),new PVector(0,0,0.001));
+  body.follow(new PVector(x,y,sin(tstep)*angrange),new PVector(0,0,0.001));
   body.follow();                                           // update the body
   flow.update(body); flow.update2();                       // 2-step fluid update
   body.display();                                          // display the body
