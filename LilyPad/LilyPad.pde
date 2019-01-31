@@ -31,6 +31,7 @@ int endstep = 4001;                                        // Number of iteratio
 int n=(int)pow(2,7);                                       // number of grid points
 int nlines = 50;                                           // Number of streamlines
 float h = 1/n;                                               // Width of one grid cell (in non-dimensionalised units)
+float dt = 0.5;
 
 // Bodytype variables ************************************
 // General
@@ -64,8 +65,8 @@ float u_spoon = 0.09916;                                            // inflow ve
 float Re_spoon = rho*u_spoon*l_spoon/mu;
 
 // Setting up for moving objects *************************
-float omega = PI/6.;                                          // angular frequency of object in rad/s
-double omegamod = omega*h;
+float omega = PI/12.;                                          // angular frequency of object in rad/s
+float omegamod = omega*dt;
 float angmax = PI/12.;                                     // maximum 'flap' in positive direction
 float angmin = -angmax;                                   // maximum 'flap' in negative direction
 float angrange = PI/6.;//abs(angmin) + abs(angmax);
@@ -89,7 +90,7 @@ void setup(){
     body = new NACA(x,y,c,t,pivot,view);                   //define geom foil
     //body.rotate(Rotate_Degrees*PI/180);
     //body.dphi=0.01;
-    flow = new BDIM(2*n,n,0.,body,c/Re_foil,true);                 // solve for flow using BDIM
+    flow = new BDIM(2*n,n,dt,body,c/Re_foil,true);                 // solve for flow using BDIM
   }
   else if (BODYTYPE == 3) {
     // Square - BODYTYPE 3
@@ -110,12 +111,11 @@ void setup(){
   
 }
 
-
 void draw(){
   tstep = tstep + 0.1;
   println(n);
   //body.follow(new PVector(x,y,Rotate_Degrees*PI/180+0.01),new PVector(0,0,0));
-  body.follow(new PVector(x,y,sin(tstep)*angrange),new PVector(0,0,0.001));
+  body.follow(new PVector(x,y,sin(tstep*omegamod)*angrange),new PVector(0,0,0.001));
   body.follow();                                           // update the body
   flow.update(body); flow.update2();                       // 2-step fluid update
   body.display();                                          // display the body
