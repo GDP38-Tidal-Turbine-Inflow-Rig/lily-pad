@@ -30,49 +30,51 @@ int timestep = 1;                                          // Current time step
 int endstep = 4001;                                        // Number of iterations before simulation exits
 int n=(int)pow(2,7);                                       // number of grid points
 int nlines = 50;                                           // Number of streamlines
+float dt;
 
 // Bodytype variables ************************************
 // General
 int BODYTYPE = 22;
 float mu_kin = 0.0000011375;
-float Rotate_Degrees = 45;
-float width_flume_m = 3.7;
+float Rotate_Degrees = 30;
+float width_flume_m = 0.6;
 // Circle - BODYTYPE 1
-float u_circle_m_s = 0.09916; 
-float l_circle = 0.1;
+float u_circle_m_s = 0.34; 
+float l_circle = 0.09;
 float L_circle = n/(width_flume_m/l_circle);                                           // length-scale in grid units
 float h_circle = l_circle/L_circle;
 float Re_circle = u_circle_m_s/mu_kin;
 float St_circle = 0.2;
 // Foil - BODYTYPE 2
-float l_foil = 0.94792;
-float u_foil = 0.6;                                            // inflow velocity
+float l_foil =0.195;
+float u_foil = 0.34;                                            // inflow velocity
 float Re_foil = u_foil/mu_kin;
 float x= n/3;
 float y= n/2;
 float c= n/(width_flume_m/l_foil);
-float t= 0.15;
-float pivot =0;
-float St_foil = 0.2;
+float t= 0.3;
+float pivot = 0.25;
+float St_foil = 0.1;
 // Square - BODYTYPE 3
-float u_square_m_s = 0.09916;
-float l_square = 0.1;
+float u_square_m_s = 0.34;
+float l_square = 0.09;
 float L_square = n/(width_flume_m/l_square);                                           // length-scale in grid units
 float Re_square = u_square_m_s/mu_kin;
 float St_square = 0.2;
 // Spoon - BODYTYPE 4
-float u_spoon_m_s = 0.09916;
-float l_spoon = 0.05;
+float u_spoon_m_s = 0.34;
+float l_spoon = 0.1;
 float L_spoon = n/(width_flume_m/l_spoon);                                           // length-scale in grid units
 float Re_spoon = u_spoon_m_s/mu_kin;
 float St_spoon = 0.2;
 
 // Setting up for moving objects *************************
-float omega = PI/12.;                                          // angular frequency of object in rad/s
+float omega = 0;//(St_foil*u_foil)/(2*PI*l_foil);                                          // angular frequency of object in rad/s
+//float omega = (St_foil*1)/(2*PI*c);  
 //float omegamod = omega*dt;
 float angmax = PI/12.;                                     // maximum 'flap' in positive direction
 float angmin = -angmax;                                   // maximum 'flap' in negative direction
-float angrange = PI/6.; //abs(angmin) + abs(angmax);
+float angrange = PI/24.; //abs(angmin) + abs(angmax);
 float tstep = 0;
 
 
@@ -131,10 +133,11 @@ void setup(){
 
 
 void draw(){
-  tstep = tstep + 0.1;
-  println(n);
-  body.follow(new PVector(x,y,sin(tstep*omega*0.1)*angrange),new PVector(0,0,0.001));
-  body.follow();                                           // update the body
+  dt = flow.dt;
+  tstep = tstep + dt;
+  //body.follow(new PVector(x,y,sin(omega*tstep)*angrange),new PVector(0,0,omega*cos(omega*tstep)*angrange));
+  body.follow(new PVector(x,y,Rotate_Degrees*PI/180.),new PVector(0,0,0.0000001));
+  //body.follow();                                           // update the body
   flow.update(body); flow.update2();                       // 2-step fluid update
   body.display();                                          // display the body
   plot.update(flow);                                       // !NOTE!
@@ -210,7 +213,7 @@ void draw(){
   float measurement_speed_x3 = velocity_interp.x.quadratic(position_x3, position_y3);
   float measurement_speed_y3 = velocity_interp.y.quadratic(position_x3, position_y3);
   output_probes.println(""+measurement_pressure1+","+measurement_speed_x1+","+measurement_speed_y1+","+measurement_pressure2+","+measurement_speed_x2+","+measurement_speed_y2+","+measurement_pressure3+","+measurement_speed_x3+","+measurement_speed_y3+"");
-  
+  saveFrame("saved2/frame-####.tif");
   timestep = timestep + 1;
   if(timestep >= endstep) {                                // finish after endstep cycles
     exit();
