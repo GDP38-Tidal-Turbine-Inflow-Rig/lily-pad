@@ -19,7 +19,7 @@ DECLARATIONS
 BDIM flow;
 Body body;
 ParticlePlot plot;
-Body react;
+Body react; 
 PrintWriter output_body;
 PrintWriter output_probes;
 AncientSwimmer plesiosaur;
@@ -29,8 +29,8 @@ float time_s = 200;
 
 // Environment constants *********************************
 int timestep = 1;                                          // Current time step
-int endstep = 12001;                                        // Number of iterations before simulation exits
-int n=(int)pow(2,7);                                       // number of grid points
+int endstep = 4001;                                        // Number of iterations before simulation exits
+int n=(int)pow(2,6);                                       // number of grid points
 int nlines = 50;                                           // Number of streamlines
 float dt;
 float h = 1.0/n;
@@ -72,7 +72,7 @@ float Re_spoon = u_spoon_m_s/mu_kin;
 float St_spoon = 0.2;
 
 // Setting up for moving objects *************************
-//float omega = 15*PI/180.;
+float omega = 15*PI/180.;
 //float omega = (St_foil*u_foil)/(2*PI*l_foil)*2*PI;                                          // angular frequency of object in rad/s
 //float omega = St_foil*u_foil/(2*l_foil*sin(Rotate_Degrees*PI/180));  //new frequency Jamesk
 //float omegamod = omega*dt;
@@ -123,7 +123,7 @@ void setup(){
   }
   else if (BODYTYPE == 22) {
     // Foil - BODYTYPE 2 NEED TO COMMENT OUT ALL ABOVE IF STATEMENTS TO AVOID Body/BodyUnion CONFLICT. ALSO COMMENT OUT PRESSURE etc. MEASUREMENT CODE UNTIL FIXED!!!
-    float spacing = 0.75*c/2;
+    float spacing = 2*c/2;
     body = new BodyUnion(new NACA(x,y+2*spacing/2,c,t,pivot,view), new NACA(x,y-2*spacing/2,c,t,pivot,view));                   //define geom foil
     flow = new BDIM(2*n,n,0.,body,c/Re_foil,true);                 // solve for flow using BDIM
     //bod
@@ -159,16 +159,17 @@ void setup(){
 void draw(){
   dt = flow.dt;
   tstep = tstep + dt;
-  //float omegamod = omega*2*h/u_foil;
-  //body.follow(new PVector(x,y,sin(omegamod*tstep)*angrange),new PVector(0,0,omegamod*cos(omegamod*tstep)*angrange));
-  body.follow(new PVector(x,y,Rotate_Degrees*PI/180.),new PVector(0,0,0.0000001));
+  //float omegamod = omega*2*h/u_foil; 
+  float freq = (l_foil*omega)/(c*u_foil)*2*PI;
+  body.follow(new PVector(x,y,sin(freq*tstep)*angrange),new PVector(0,0,freq*cos(freq*tstep)*angrange));
+  //body.follow(new PVector(x,y,Rotate_Degrees*PI/180.),new PVector(0,0,0.0000001));
   //body.follow();                                           // update the body
   flow.update(body); flow.update2();                       // 2-step fluid update
   body.display();                                          // display the body
   plot.update(flow);                                       // !NOTE!
   plot.display(flow.u.curl());
   body.display();
-  float deltatime = flow.dt*h/u_foil;
+  float deltatime = (flow.dt*l_foil)/(u_foil*c);
   println(timestep);
   //lift and drag body
   if (BODYTYPE == 1) {
